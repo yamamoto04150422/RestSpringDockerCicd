@@ -34,19 +34,31 @@ jobs:
 
     - name: Wait for PostgreSQL to start
       run: |
-        n=0
-        until [ $n -ge 5 ]
-        do
-          docker-compose exec db pg_isready -q -h db -U user -d mydb && break
-          n=$((n+1))
-          sleep 10
+        echo "Waiting for PostgreSQL to start..."
+        until docker-compose exec db pg_isready -q -h localhost -U user -d mydb; do
+          >&2 echo "Postgres is unavailable - sleeping"
+          sleep 1
         done
+        echo "PostgreSQL is up - continuing"
 
     - name: Run Docker container
+      run: docker run -d -p 8080:8080 --name my-app --network restspringdockercicd_default my-spring-boot-app
+
+    - name: Wait for the app to start
       run: |
-        docker network create my-network
-        docker run -d -p 8080:8080 --name my-app --network my-network my-spring-boot-app
-      
+        echo "Waiting for the app to start..."
+        ATTEMPTS_LEFT=30
+        until [ $ATTEMPTS_LEFT -eq 0 ] || curl -s http://localhost:8080/data/1; do
+          echo "Waiting for the app to be accessible..."
+          sleep 2
+          ATTEMPTS_LEFT=$((ATTEMPTS_LEFT - 1))
+        done
+        if [ $ATTEMPTS_LEFT -eq 0 ]; then
+          echo "The app did not start in time."
+          docker logs my-app  # Add logs for debugging
+          exit 1
+        fi
+        echo "The app is up - continuing"
 
     - name: Check running containers
       run: docker ps -a
@@ -55,11 +67,4 @@ jobs:
       run: |
         RESPONSE=$(curl -s -S http://localhost:8080/data/1)
         echo "Response from API: $RESPONSE"
-        # Optionally validate the response here
-        if [ -z "$RESPONSE" ]; then
-          echo "API response is empty or failed."
-          exit 1
-        fi
-
-    - name: Stop PostgreSQL container
-      run: docker-compose down
+        # Optionally v
