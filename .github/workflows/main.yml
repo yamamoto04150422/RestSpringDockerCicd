@@ -3,7 +3,7 @@ name: Java CI with Docker
 on:
   push:
     branches:
-      - masetr
+      - master
   pull_request:
     branches:
       - master
