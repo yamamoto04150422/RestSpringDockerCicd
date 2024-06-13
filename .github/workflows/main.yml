@@ -53,8 +53,13 @@ jobs:
 
     - name: Test API endpoint
       run: |
-        curl -s -S http://localhost:8080/data/1
+        RESPONSE=$(curl -s -S http://localhost:8080/data/1)
+        echo "Response from API: $RESPONSE"
         # Optionally validate the response here
+        if [ -z "$RESPONSE" ]; then
+          echo "API response is empty or failed."
+          exit 1
+        fi
 
     - name: Stop PostgreSQL container
       run: docker-compose down
