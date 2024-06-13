@@ -37,7 +37,7 @@ jobs:
         n=0
         until [ $n -ge 5 ]
         do
-          docker-compose exec db pg_isready -q -h db -U user -d mydb && break
+          docker-compose exec -T db pg_isready -q -h db -U user -d mydb && break
           n=$((n+1))
           sleep 10
         done
@@ -50,6 +50,22 @@ jobs:
 
     - name: Check running containers
       run: docker ps -a
+
+    - name: Wait for the app to start
+      run: |
+        echo "Waiting for the app to start..."
+        ATTEMPTS_LEFT=30
+        until [ $ATTEMPTS_LEFT -eq 0 ] || curl -s http://localhost:8080/data/1; do
+          echo "Waiting for the app to be accessible..."
+          sleep 2
+          ATTEMPTS_LEFT=$((ATTEMPTS_LEFT - 1))
+        done
+        if [ $ATTEMPTS_LEFT -eq 0 ]; then
+          echo "The app did not start in time."
+          docker logs my-app  # Add logs for debugging
+          exit 1
+        fi
+        echo "The app is up - continuing"
 
     - name: Test API endpoint
       run: |
