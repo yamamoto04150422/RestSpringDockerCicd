@@ -37,7 +37,10 @@ jobs:
         docker-compose run db bash -c 'while ! pg_isready -q -h db -U user -d mydb; do sleep 1; done'
 
     - name: Run Docker container
-      run: docker run -d -p 8080:8080 --name my-app --network container:db my-spring-boot-app
+      run: |
+        docker network create my-network
+        docker run -d -p 8080:8080 --name my-app --network my-network my-spring-boot-app
+      
 
     - name: Check running containers
       run: docker ps -a
