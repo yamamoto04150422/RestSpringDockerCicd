@@ -16,6 +16,10 @@ curl http://localhost:8080/api/data
 # APIエンドポイントにPOSTリクエストを送信する（JSONデータを含む）
 curl -X POST http://localhost:8080/api/data -H "Content-Type: application/json" -d '{"name":"Alice"}'
 
+# APIエンドポイントにGETリクエストを送信してIDのすべてのデータを取得する
+
+curl -X GET http://localhost:8080/api
+
 # APIエンドポイントにGETリクエストを送信してIDが1のデータを取得する
 curl -X GET http://localhost:8080/api/data/1
 
