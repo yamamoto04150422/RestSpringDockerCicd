@@ -59,7 +59,7 @@ jobs:
         done
         if [ $ATTEMPTS_LEFT -eq 0 ]; then
           echo "The app did not start in time."
-          docker logs $(docker ps -qf "name=java-docker-app")  # Add logs for debugging
+          docker logs restspringdockercicd_app_1  # Update with the actual container name
           exit 1
         fi
         echo "The app is up - continuing"
@@ -69,22 +69,22 @@ jobs:
         RESPONSE=$(curl -s -S http://localhost:8080/data/1)
         echo "Response from API: $RESPONSE"
         # Optionally validate the response here
-        if [ -z "$RESPONSE" ];then
+        if [ -z "$RESPONSE" ]; then
           echo "API response is empty or failed."
-          docker logs $(docker ps -qf "name=java-docker-app")  # Add logs for debugging
+          docker logs restspringdockercicd_app_1  # Update with the actual container name
           exit 1
         fi
 
     - name: Execute Maven tests
       run: |
-        CONTAINER_ID=$(docker ps -qf "name=java-docker-app")
-        echo "Running tests in container: $CONTAINER_ID"
-        if [ -z "$CONTAINER_ID" ]; then
-          echo "No container found with name java-docker-app"
+        CONTAINER_NAME=$(docker ps -qf "name=restspringdockercicd_app")
+        echo "Running tests in container: $CONTAINER_NAME"
+        if [ -z "$CONTAINER_NAME" ]; then
+          echo "No container found with name restspringdockercicd_app"
           docker ps -a  # List all containers for debugging
           exit 1
         fi
-        docker exec $CONTAINER_ID mvn test
+        docker exec -it $CONTAINER_NAME mvn test
 
     - name: Stop Docker containers
       run: docker-compose down
