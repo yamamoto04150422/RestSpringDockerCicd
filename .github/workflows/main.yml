@@ -84,7 +84,7 @@ jobs:
           docker ps -a  # List all containers for debugging
           exit 1
         fi
-        docker exec -it $CONTAINER_NAME mvn test
+        docker exec $CONTAINER_NAME mvn test  # Remove the -it option
 
     - name: Stop Docker containers
       run: docker-compose down
