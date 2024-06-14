@@ -7,8 +7,9 @@ WORKDIR /app
 # Copy the current directory contents into the container at /app
 COPY . .
 
-# Install Maven
-RUN apt-get update && apt-get install -y maven
+# Install Maven and dependencies
+RUN apt-get update && apt-get install -y maven curl && \
+    curl -o /app/postgresql-42.2.19.jar https://jdbc.postgresql.org/download/postgresql-42.2.19.jar
 
 # Build the application
 RUN mvn clean package -DskipTests
