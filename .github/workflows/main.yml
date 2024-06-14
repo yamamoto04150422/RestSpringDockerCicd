@@ -37,7 +37,7 @@ jobs:
         n=0
         until [ $n -ge 5 ]
         do
-          docker-compose exec -T db pg_isready -q -h db -U user -d mydatabase && break
+          docker-compose exec -T db pg_isready -q -h db -U user -d mydb && break
           n=$((n+1))
           sleep 10
         done
