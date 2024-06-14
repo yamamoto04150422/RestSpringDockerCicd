@@ -75,10 +75,10 @@ jobs:
           exit 1
         fi
 
-    - name: Stop PostgreSQL container
-      run: docker-compose down
-
     - name: Execute Maven tests
       run: |
         CONTAINER_ID=$(docker ps -qf "name=java-docker-app")
         docker exec -it $CONTAINER_ID mvn test
+
+    - name: Stop Docker containers
+      run: docker-compose down
