@@ -77,3 +77,7 @@ jobs:
 
     - name: Stop PostgreSQL container
       run: docker-compose down
+
+    - name: Execute Maven tests
+      run: |
+        docker exec -it $(docker ps -qf "name=java-docker-app") /bin/bash -c "mvn test"
