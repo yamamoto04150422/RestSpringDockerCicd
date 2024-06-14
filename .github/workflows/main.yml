@@ -80,4 +80,5 @@ jobs:
 
     - name: Execute Maven tests
       run: |
-        docker exec -it $(docker ps -qf "name=java-docker-app") /bin/bash -c "mvn test"
+        CONTAINER_ID=$(docker ps -qf "name=java-docker-app")
+        docker exec -it $CONTAINER_ID mvn test
