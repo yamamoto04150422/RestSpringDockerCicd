@@ -78,6 +78,7 @@ jobs:
     - name: Execute Maven tests
       run: |
         CONTAINER_ID=$(docker ps -qf "name=java-docker-app")
+        echo "Running tests in container: $CONTAINER_ID"
         docker exec -it $CONTAINER_ID mvn test
 
     - name: Stop Docker containers
